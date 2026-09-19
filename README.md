@@ -125,6 +125,29 @@ The included Dockerfiles and `docker-compose.yml` can run all four required serv
 - MongoDB Atlas or another hosted MongoDB instance, and
 - managed Redis (e.g. Redis Cloud/Upstash/provider Redis).
 
+### Railway deployment
+
+Create four Railway services: `frontend`, `backend`, MongoDB, and Redis. Only
+make `frontend` public. Keep `VITE_API_URL` blank so the Nginx container proxies
+`/api` requests and Server-Sent Events to the private backend, preserving the
+same-origin voter cookie.
+
+Set the frontend service variable below (assuming the backend service is named
+`backend`):
+
+```text
+BACKEND_UPSTREAM=http://${{backend.RAILWAY_PRIVATE_DOMAIN}}:${{backend.PORT}}
+```
+
+Railway provides the frontend's `PORT` automatically; the included Nginx
+template listens on that port. Leave the default
+`BACKEND_UPSTREAM=http://backend:8080` for local Docker Compose.
+
+Set the backend service's MongoDB and Redis connection variables from Railway's
+private service references, generate a new 32+ character `JWT_SECRET` inside
+Railway, and use the public frontend domain for `FRONTEND_ORIGIN`. Use
+`COOKIE_SECURE=true` and `COOKIE_SAME_SITE=lax` in production.
+
 Set these production variables on the backend:
 
 ```text

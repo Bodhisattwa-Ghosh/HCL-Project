@@ -47,6 +47,9 @@ services:
       args:
         VITE_API_URL: ""
     restart: unless-stopped
+    environment:
+      BACKEND_UPSTREAM: http://backend:8080
+      PORT: "80"
     ports:
       - "8088:80"
     depends_on:
