@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/Bodhisattwa-Ghosh/HCL-Project/backend/internal/domain"
 	"github.com/Bodhisattwa-Ghosh/HCL-Project/backend/internal/repository"
 	"github.com/Bodhisattwa-Ghosh/HCL-Project/backend/internal/validation"
+	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
