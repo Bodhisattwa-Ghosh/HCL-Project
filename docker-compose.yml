@@ -1,0 +1,58 @@
+services:
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DATABASE: pulsepoll
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-local-development-secret-change-me-2026}
+      JWT_TTL_HOURS: "168"
+      FRONTEND_ORIGIN: http://localhost:8088
+      COOKIE_SECURE: "false"
+      COOKIE_SAME_SITE: lax
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ""
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  mongo_data:
+  redis_data:

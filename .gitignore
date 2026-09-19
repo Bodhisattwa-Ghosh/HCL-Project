@@ -1,0 +1,21 @@
+# Environment and editor state
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+
+# Go / local tools and temporary review assets
+backend/coverage.out
+tmp/
+_tmp/
+
+# Local database data (if a non-Docker setup uses these names)
+mongo_data/
+redis_data/
